@@ -25,7 +25,7 @@ from gbd_init.initializer import Initializer, InitializerException
 
 gbdc_available = True
 try:
-    from gbdc import extract_base_features, base_feature_names, extract_gate_features, gate_feature_names, isohash, wcnfisohash, wcnf_base_feature_names, extract_wcnf_base_features, opb_base_feature_names, extract_opb_base_features
+    from gbdc import extract_base_features, base_feature_names, extract_gate_features, gate_feature_names, isohash, isohash2, wcnfisohash, wcnf_base_feature_names, extract_wcnf_base_features, opb_base_feature_names, extract_opb_base_features
 except ImportError:
     gbdc_available = False
     warnings.warn("gbdc not found. Please install using 'pip install gbdc'.")
@@ -42,6 +42,9 @@ except ImportError:
         return [ ]
     
     def isohash(path):
+        raise ModuleNotFoundError("gbdc not found", name="gbdc")
+
+    def isohash2(path):
         raise ModuleNotFoundError("gbdc not found", name="gbdc")
 
     def extract_wcnf_base_features(path, tlim, mlim):
@@ -68,9 +71,11 @@ def compute_isohash(hash, path, limits):
     context = get_context_by_suffix(path)
     if context == 'wcnf':
         ihash = wcnfisohash(path)
+        ihash2 = "empty"
     else:
         ihash = isohash(path)
-    return [ ('isohash', hash, ihash) ]
+        ihash2 = isohash2(path)
+    return [ ('isohash', hash, ihash), ('isohash2', hash, ihash2) ]
 
 ## Base Features
 def compute_base_features(hash, path, limits, tp=None):
@@ -113,7 +118,7 @@ generic_extractors = {
     "isohash" : {
         "description" : "Compute ISOHash for CNF or WCNF files. ",
         "contexts" : [ "cnf", "wcnf" ],
-        "features" : [ ("isohash", "empty") ],
+        "features" : [ ("isohash", "empty"), ("isohash2", "empty") ],
         "compute" : compute_isohash,
     },
     "wcnfbase" : {
