@@ -70,10 +70,10 @@ def compute_isohash(hash, path, limits):
     eprint('Computing ISOHash for {}'.format(path))
     context = get_context_by_suffix(path)
     if context == 'wcnf':
-        wlh0 = 'empty'
+        wlh = 'empty'
     else:
-        wlh0 = weisfeiler_leman_hash(99999, path)
-    return [ ('wlh0', hash, wlh0), ]
+        wlh = weisfeiler_leman_hash(99999, path)
+    return [ ('wlh', hash, wlh), ]
 
 ## Base Features
 def compute_base_features(hash, path, limits, tp=None):
@@ -116,7 +116,7 @@ generic_extractors = {
     "isohash" : {
         "description" : "Compute ISOHash for CNF or WCNF files. ",
         "contexts" : [ "cnf", "wcnf" ],
-        "features" : [ ("wlh0", "empty"), ],
+        "features" : [ ("wlh", "empty"), ],
         "compute" : compute_isohash,
     },
     "wcnfbase" : {
