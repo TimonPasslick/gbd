@@ -65,6 +65,8 @@ def compute_hash(hash, path, limits):
     hash = identify(path)
     return [ ("local", hash, path), ("filename", hash, os.path.basename(path)) ]
 
+weisfeiler_leman_hash_calculation_time = 0
+weisfeiler_leman_hash_parsing_time = 0
 ## ISOHash
 def compute_isohash(hash, path, limits):
     eprint('Computing ISOHash for {}'.format(path))
@@ -72,7 +74,10 @@ def compute_isohash(hash, path, limits):
     if context == 'wcnf':
         wlh = 'empty'
     else:
-        wlh = weisfeiler_leman_hash(99999, path)
+        results = weisfeiler_leman_hash(99999, path).split(',')
+        wlh = results[0]
+        weisfeiler_leman_hash_calculation_time += results[1]
+        weisfeiler_leman_hash_parsing_time += results[2]
     return [ ('wlh', hash, wlh), ]
 
 ## Base Features
@@ -142,6 +147,9 @@ def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
     extractor = Initializer(api, rlimits, target_db, einfo["features"], einfo["compute"])
     extractor.create_features()
     extractor.run(df)
+    if key == "isohash":
+        print("nanoseconds parsing:  ", weisfeiler_leman_hash_parsing_time)
+        print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time)
 
 
 def init_local(api: GBD, rlimits, root, target_db):
