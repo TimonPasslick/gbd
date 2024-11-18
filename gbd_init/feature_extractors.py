@@ -71,6 +71,9 @@ weisfeiler_leman_hash_calculation_time = 0
 weisfeiler_leman_hash_parsing_time = 0
 ## ISOHash
 def compute_isohash(hash, path, limits):
+    global weisfeiler_leman_hash_lock
+    global weisfeiler_leman_hash_calculation_time
+    global weisfeiler_leman_hash_parsing_time
     eprint('Computing ISOHash for {}'.format(path))
     context = get_context_by_suffix(path)
     if context == 'wcnf':
@@ -151,6 +154,8 @@ def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
     extractor.create_features()
     extractor.run(df)
     if key == "isohash":
+        global weisfeiler_leman_hash_calculation_time
+        global weisfeiler_leman_hash_parsing_time
         print("nanoseconds parsing:  ", weisfeiler_leman_hash_parsing_time)
         print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time)
 
