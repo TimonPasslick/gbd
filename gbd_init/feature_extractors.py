@@ -82,8 +82,8 @@ def compute_isohash(hash, path, limits):
         results = weisfeiler_leman_hash(99999, path).split(',')
         wlh = results[0]
         with weisfeiler_leman_hash_lock:
-            weisfeiler_leman_hash_calculation_time += results[1]
-            weisfeiler_leman_hash_parsing_time += results[2]
+            weisfeiler_leman_hash_calculation_time += int(results[1])
+            weisfeiler_leman_hash_parsing_time += int(results[2])
     return [ ('wlh', hash, wlh), ]
 
 ## Base Features
