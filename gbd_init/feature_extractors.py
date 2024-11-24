@@ -13,11 +13,11 @@
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
 
-import threading
 import pandas as pd
 import os
 import glob
 import warnings
+from multiprocessing import Value
 
 from gbd_core.contexts import suffixes, identify, get_context_by_suffix
 from gbd_core.api import GBD, GBDException
@@ -66,9 +66,8 @@ def compute_hash(hash, path, limits):
     hash = identify(path)
     return [ ("local", hash, path), ("filename", hash, os.path.basename(path)) ]
 
-weisfeiler_leman_hash_lock = threading.Lock()
-weisfeiler_leman_hash_calculation_time = 0
-weisfeiler_leman_hash_parsing_time = 0
+weisfeiler_leman_hash_calculation_time = None
+weisfeiler_leman_hash_parsing_time = None
 ## ISOHash
 def compute_isohash(hash, path, limits):
     global weisfeiler_leman_hash_lock
@@ -81,8 +80,9 @@ def compute_isohash(hash, path, limits):
     else:
         results = weisfeiler_leman_hash(99999, path).split(',')
         wlh = results[0]
-        with weisfeiler_leman_hash_lock:
+        with weisfeiler_leman_hash_calculation_time.get_lock():
             weisfeiler_leman_hash_calculation_time += int(results[1])
+        with weisfeiler_leman_hash_parsing_time.get_lock():
             weisfeiler_leman_hash_parsing_time += int(results[2])
     return [ ('wlh', hash, wlh), ]
 
@@ -146,6 +146,11 @@ generic_extractors = {
 
 
 def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
+    if key == "isohash":
+        global weisfeiler_leman_hash_calculation_time
+        global weisfeiler_leman_hash_parsing_time
+        weisfeiler_leman_hash_calculation_time = Value('i', 0)
+        weisfeiler_leman_hash_parsing_time = Value('i', 0)
     einfo = generic_extractors[key]
     context = api.database.dcontext(target_db)
     if not context in einfo["contexts"]:
