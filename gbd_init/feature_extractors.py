@@ -67,8 +67,6 @@ def compute_hash(hash, path, limits):
     return [ ("local", hash, path), ("filename", hash, os.path.basename(path)) ]
 
 ## ISOHash
-weisfeiler_leman_hash_calculation_time = Value('i', 0)
-weisfeiler_leman_hash_parsing_time = Value('i', 0)
 def compute_isohash(hash, path, limits):
     eprint('Computing ISOHash for {}'.format(path))
     context = get_context_by_suffix(path)
@@ -146,6 +144,12 @@ generic_extractors = {
 
 
 def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
+    if key == "isohash":
+        global weisfeiler_leman_hash_parsing_time
+        weisfeiler_leman_hash_parsing_time = Value('i', 0)
+        global weisfeiler_leman_hash_calculation_time
+        weisfeiler_leman_hash_calculation_time = Value('i', 0)
+        print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time.value)
     einfo = generic_extractors[key]
     context = api.database.dcontext(target_db)
     if not context in einfo["contexts"]:
