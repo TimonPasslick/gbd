@@ -153,8 +153,8 @@ def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
     extractor.create_features()
     extractor.run(df)
     if key == "isohash":
-        print("nanoseconds parsing:  ", weisfeiler_leman_hash_parsing_time)
-        print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time)
+        print("nanoseconds parsing:  ", weisfeiler_leman_hash_parsing_time.value)
+        print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time.value)
 
 
 def init_local(api: GBD, rlimits, root, target_db):
