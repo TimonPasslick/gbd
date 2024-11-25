@@ -66,8 +66,6 @@ def compute_hash(hash, path, limits):
     hash = identify(path)
     return [ ("local", hash, path), ("filename", hash, os.path.basename(path)) ]
 
-weisfeiler_leman_hash_calculation_time = None
-weisfeiler_leman_hash_parsing_time = None
 ## ISOHash
 def compute_isohash(hash, path, limits):
     eprint('Computing ISOHash for {}'.format(path))
@@ -77,8 +75,10 @@ def compute_isohash(hash, path, limits):
     else:
         results = weisfeiler_leman_hash(path, 13, True, True, True, 3, True).split(',')
         wlh = results[0]
+        global weisfeiler_leman_hash_calculation_time
         with weisfeiler_leman_hash_calculation_time.get_lock():
             weisfeiler_leman_hash_calculation_time += int(results[1])
+        global weisfeiler_leman_hash_parsing_time
         with weisfeiler_leman_hash_parsing_time.get_lock():
             weisfeiler_leman_hash_parsing_time += int(results[2])
     return [ ('wlh', hash, wlh), ]
@@ -143,9 +143,6 @@ generic_extractors = {
 
 
 def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
-    if key == "isohash":
-        weisfeiler_leman_hash_calculation_time = Value('i', 0)
-        weisfeiler_leman_hash_parsing_time = Value('i', 0)
     einfo = generic_extractors[key]
     context = api.database.dcontext(target_db)
     if not context in einfo["contexts"]:
@@ -180,3 +177,6 @@ def init_local(api: GBD, rlimits, root, target_db):
     df2 = pd.DataFrame([(None, path) for path in paths if not path in df["local"].to_list()], columns=["hash", "local"])
     
     extractor.run(df2)
+
+weisfeiler_leman_hash_calculation_time = Value('i', 0)
+weisfeiler_leman_hash_parsing_time = Value('i', 0)
