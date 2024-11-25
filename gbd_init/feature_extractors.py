@@ -143,6 +143,11 @@ generic_extractors = {
 
 
 def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
+    if key == "isohash":
+        global weisfeiler_leman_hash_calculation_time
+        weisfeiler_leman_hash_calculation_time = Value('i', 0)
+        global weisfeiler_leman_hash_parsing_time
+        weisfeiler_leman_hash_parsing_time = Value('i', 0)
     einfo = generic_extractors[key]
     context = api.database.dcontext(target_db)
     if not context in einfo["contexts"]:
@@ -177,6 +182,3 @@ def init_local(api: GBD, rlimits, root, target_db):
     df2 = pd.DataFrame([(None, path) for path in paths if not path in df["local"].to_list()], columns=["hash", "local"])
     
     extractor.run(df2)
-
-weisfeiler_leman_hash_calculation_time = Value('i', 0)
-weisfeiler_leman_hash_parsing_time = Value('i', 0)
