@@ -79,10 +79,10 @@ def compute_isohash(hash, path, limits):
         wlh = results[0]
         global weisfeiler_leman_hash_calculation_time
         with weisfeiler_leman_hash_calculation_time.get_lock():
-            weisfeiler_leman_hash_calculation_time += int(results[1])
+            weisfeiler_leman_hash_calculation_time.value += int(results[1])
         global weisfeiler_leman_hash_parsing_time
         with weisfeiler_leman_hash_parsing_time.get_lock():
-            weisfeiler_leman_hash_parsing_time += int(results[2])
+            weisfeiler_leman_hash_parsing_time.value += int(results[2])
     return [ ('wlh', hash, wlh), ]
 
 ## Base Features
