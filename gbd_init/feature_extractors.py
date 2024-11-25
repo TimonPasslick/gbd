@@ -76,6 +76,7 @@ def compute_isohash(hash, path, limits):
         wlh = 'empty'
     else:
         results = weisfeiler_leman_hash(path, 13, True, True, True, 3, True).split(',')
+        print(results)
         wlh = results[0]
         global weisfeiler_leman_hash_calculation_time
         with weisfeiler_leman_hash_calculation_time.get_lock():
