@@ -26,7 +26,7 @@ from gbd_init.initializer import Initializer, InitializerException
 
 gbdc_available = True
 try:
-    from gbdc import extract_base_features, base_feature_names, extract_gate_features, gate_feature_names, isohash, weisfeiler_leman_hash, wcnfisohash, wcnf_base_feature_names, extract_wcnf_base_features, opb_base_feature_names, extract_opb_base_features
+    from gbdc import extract_base_features, base_feature_names, extract_gate_features, gate_feature_names, isohash, weisfeiler_leman_hash, weisfeiler_leman_hash_parsing_time, weisfeiler_leman_hash_calculation_time, wcnfisohash, wcnf_base_feature_names, extract_wcnf_base_features, opb_base_feature_names, extract_opb_base_features
 except ImportError:
     gbdc_available = False
     warnings.warn("gbdc not found. Please install using 'pip install gbdc'.")
@@ -73,15 +73,20 @@ def compute_isohash(hash, path, limits):
     if context == 'wcnf':
         wlh = 'empty'
     else:
-        results = weisfeiler_leman_hash(path, 13, True, True, True, 3, True).split(',')
+        results = weisfeiler_leman_hash(
+                filename = path,
+                formula_optimization_level = 2,
+                use_xxh3 = True,
+                use_half_word_hash = False,
+                use_prime_ring = False,
+                depth = 13,
+                cross_reference_literals = True,
+                rehash_clauses = True,
+                optimize_first_iteration = True,
+                first_progress_check_iteration = 3,
+                return_iterations = True
+            ).split(',')
         wlh = results[0]
-        global weisfeiler_leman_hash_calculation_time
-        with weisfeiler_leman_hash_calculation_time.get_lock():
-            weisfeiler_leman_hash_calculation_time.value += int(results[1])
-            print(weisfeiler_leman_hash_calculation_time.value)
-        global weisfeiler_leman_hash_parsing_time
-        with weisfeiler_leman_hash_parsing_time.get_lock():
-            weisfeiler_leman_hash_parsing_time.value += int(results[2])
     return [ ('wlh', hash, wlh), ]
 
 ## Base Features
@@ -144,12 +149,6 @@ generic_extractors = {
 
 
 def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
-    if key == "isohash":
-        global weisfeiler_leman_hash_parsing_time
-        weisfeiler_leman_hash_parsing_time = Value('i', 0)
-        global weisfeiler_leman_hash_calculation_time
-        weisfeiler_leman_hash_calculation_time = Value('i', 0)
-        print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time.value)
     einfo = generic_extractors[key]
     context = api.database.dcontext(target_db)
     if not context in einfo["contexts"]:
@@ -158,8 +157,8 @@ def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
     extractor.create_features()
     extractor.run(df)
     if key == "isohash":
-        print("nanoseconds parsing:  ", weisfeiler_leman_hash_parsing_time.value)
-        print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time.value)
+        print("nanoseconds parsing:  ", weisfeiler_leman_hash_parsing_time())
+        print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time())
 
 
 def init_local(api: GBD, rlimits, root, target_db):
