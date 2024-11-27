@@ -87,7 +87,7 @@ def compute_isohash(hash, path, limits):
                 rehash_clauses = True,
                 optimize_first_iteration = True,
                 first_progress_check_iteration = 3,
-                return_iterations = True
+                return_measurements = True
             ).split(',')
         wlh = results[0]
         wltp = results[1]
