@@ -72,6 +72,9 @@ def compute_isohash(hash, path, limits):
     context = get_context_by_suffix(path)
     if context == 'wcnf':
         wlh = 'empty'
+        wltp = 'empty'
+        wltc = 'empty'
+        wli = 'empty'
     else:
         results = weisfeiler_leman_hash(
                 filename = path,
@@ -87,7 +90,10 @@ def compute_isohash(hash, path, limits):
                 return_iterations = True
             ).split(',')
         wlh = results[0]
-    return [ ('wlh', hash, wlh), ]
+        wltp = results[1]
+        wltc = results[2]
+        wli = results[3]
+    return [('wlh', hash, wlh), ('wltp', hash, wltp), ('wltc', hash, wltc), ('wli', hash, wli), ]
 
 ## Base Features
 def compute_base_features(hash, path, limits, tp=None):
@@ -130,7 +136,7 @@ generic_extractors = {
     "isohash" : {
         "description" : "Compute ISOHash for CNF or WCNF files. ",
         "contexts" : [ "cnf", "wcnf" ],
-        "features" : [ ("wlh", "empty"), ],
+        "features" : [ ("wlh", "empty"), ("wltp", "empty", "wltc", "empty", "wli", "empty") ],
         "compute" : compute_isohash,
     },
     "wcnfbase" : {
@@ -156,9 +162,6 @@ def init_features_generic(key: str, api: GBD, rlimits, df, target_db):
     extractor = Initializer(api, rlimits, target_db, einfo["features"], einfo["compute"])
     extractor.create_features()
     extractor.run(df)
-    if key == "isohash":
-        print("nanoseconds parsing:  ", weisfeiler_leman_hash_parsing_time())
-        print("nanoseconds algorithm:", weisfeiler_leman_hash_calculation_time())
 
 
 def init_local(api: GBD, rlimits, root, target_db):
