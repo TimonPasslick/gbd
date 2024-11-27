@@ -26,7 +26,7 @@ from gbd_init.initializer import Initializer, InitializerException
 
 gbdc_available = True
 try:
-    from gbdc import extract_base_features, base_feature_names, extract_gate_features, gate_feature_names, isohash, weisfeiler_leman_hash, weisfeiler_leman_hash_parsing_time, weisfeiler_leman_hash_calculation_time, wcnfisohash, wcnf_base_feature_names, extract_wcnf_base_features, opb_base_feature_names, extract_opb_base_features
+    from gbdc import extract_base_features, base_feature_names, extract_gate_features, gate_feature_names, isohash, weisfeiler_leman_hash, wcnfisohash, wcnf_base_feature_names, extract_wcnf_base_features, opb_base_feature_names, extract_opb_base_features
 except ImportError:
     gbdc_available = False
     warnings.warn("gbdc not found. Please install using 'pip install gbdc'.")
