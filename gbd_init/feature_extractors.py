@@ -136,7 +136,7 @@ generic_extractors = {
     "isohash" : {
         "description" : "Compute ISOHash for CNF or WCNF files. ",
         "contexts" : [ "cnf", "wcnf" ],
-        "features" : [ ("wlh", "empty"), ("wltp", "empty", "wltc", "empty", "wli", "empty") ],
+        "features" : [ ("wlh", "empty"), ("wltp", "empty"), ("wltc", "empty"), ("wli", "empty") ],
         "compute" : compute_isohash,
     },
     "wcnfbase" : {
