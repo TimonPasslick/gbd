@@ -74,6 +74,7 @@ def compute_isohash(hash, path, limits):
         wlh = 'empty'
         wltp = 'empty'
         wltc = 'empty'
+        wlm = 'empty'
         wli = 'empty'
     else:
         results = weisfeiler_leman_hash(
@@ -92,8 +93,9 @@ def compute_isohash(hash, path, limits):
         wlh = results[0]
         wltp = results[1]
         wltc = results[2]
-        wli = results[3]
-    return [('wlh', hash, wlh), ('wltp', hash, wltp), ('wltc', hash, wltc), ('wli', hash, wli), ]
+        wlm = results[3]
+        wli = results[4]
+    return [('wlh', hash, wlh), ('wltp', hash, wltp), ('wltc', hash, wltc), ('wlm', hash, wlm), ('wli', hash, wli), ]
 
 ## Base Features
 def compute_base_features(hash, path, limits, tp=None):
@@ -136,7 +138,7 @@ generic_extractors = {
     "isohash" : {
         "description" : "Compute ISOHash for CNF or WCNF files. ",
         "contexts" : [ "cnf", "wcnf" ],
-        "features" : [ ("wlh", "empty"), ("wltp", "empty"), ("wltc", "empty"), ("wli", "empty") ],
+        "features" : [ ("wlh", "empty"), ("wltp", "empty"), ("wltc", "empty"), ("wlm", "empty"), ("wli", "empty"), ],
         "compute" : compute_isohash,
     },
     "wcnfbase" : {
