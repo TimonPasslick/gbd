@@ -81,13 +81,14 @@ def compute_isohash(hash, path, limits):
                 filename = path,
                 formula_optimization_level = 2,
                 use_xxh3 = True,
-                use_half_word_hash = False,
+                use_half_word_hash = True,
                 use_prime_ring = False,
                 depth = 13,
                 cross_reference_literals = True,
                 rehash_clauses = True,
                 optimize_first_iteration = True,
-                first_progress_check_iteration = 3,
+                progress_check_iteration = 6,
+                shrink_to_fit = True,
                 return_measurements = True
             ).split(',')
         wlh = results[0]
